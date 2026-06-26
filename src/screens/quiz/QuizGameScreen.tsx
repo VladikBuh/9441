@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  Platform,
 } from 'react-native';
 import {useAppNavigation} from '../../navigation/NavigationContext';
 import {Colors} from '../../theme/colors';
@@ -197,32 +198,41 @@ export const QuizGameScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      <Modal visible={paused} transparent animationType="fade">
+      <Modal
+        visible={paused}
+        transparent
+        animationType="fade"
+        statusBarTranslucent={Platform.OS === 'android'}>
         <View style={styles.QuizGameScreenPauseOverlay}>
-          <View style={styles.QuizGameScreenPauseCard}>
-            <Text style={styles.QuizGameScreenPauseTitle}>Quiz Paused</Text>
-            <Text style={styles.QuizGameScreenPauseInfo}>
-              Question {qIndex + 1} of {questions.length} · Score: {score}
-            </Text>
-            <TouchableOpacity
-              style={styles.QuizGameScreenResumeBtn}
-              onPress={() => setPaused(false)}>
-              <Text style={styles.QuizGameScreenResumeBtnText}>Resume</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.QuizGameScreenRestartBtn}
-              onPress={restart}>
-              <Text style={styles.QuizGameScreenRestartBtnText}>Restart</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.QuizGameScreenExitBtn}
-              onPress={() => {
-                clearTimer();
-                goBack();
-              }}>
-              <Text style={styles.QuizGameScreenExitBtnText}>Exit Quiz</Text>
-            </TouchableOpacity>
-          </View>
+          <ScrollView
+            contentContainerStyle={styles.QuizGameScreenPauseScroll}
+            bounces={false}
+            showsVerticalScrollIndicator={false}>
+            <View style={styles.QuizGameScreenPauseCard}>
+              <Text style={styles.QuizGameScreenPauseTitle}>Quiz Paused</Text>
+              <Text style={styles.QuizGameScreenPauseInfo}>
+                Question {qIndex + 1} of {questions.length} · Score: {score}
+              </Text>
+              <TouchableOpacity
+                style={styles.QuizGameScreenResumeBtn}
+                onPress={() => setPaused(false)}>
+                <Text style={styles.QuizGameScreenResumeBtnText}>Resume</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.QuizGameScreenRestartBtn}
+                onPress={restart}>
+                <Text style={styles.QuizGameScreenRestartBtnText}>Restart</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.QuizGameScreenExitBtn}
+                onPress={() => {
+                  clearTimer();
+                  goBack();
+                }}>
+                <Text style={styles.QuizGameScreenExitBtnText}>Exit Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
@@ -344,9 +354,13 @@ const styles = StyleSheet.create({
   QuizGameScreenPauseOverlay: {
     flex: 1,
     backgroundColor: '#000000CC',
+  },
+  QuizGameScreenPauseScroll: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
+    paddingVertical: 24,
   },
 
   QuizGameScreenPauseCard: {

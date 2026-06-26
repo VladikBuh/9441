@@ -1,5 +1,13 @@
 import React, {useEffect} from 'react';
-import {BackHandler, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  BackHandler,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import {CalculatorHistoryScreen} from '../screens/calculator/CalculatorHistoryScreen';
 import {CalculatorScreen} from '../screens/calculator/CalculatorScreen';
@@ -83,11 +91,16 @@ function MainShell() {
       <View style={styles.content}>
         <TabContent />
       </View>
-      {hasOverlay && (
+      <Modal
+        visible={hasOverlay}
+        animationType="none"
+        transparent={false}
+        statusBarTranslucent
+        onRequestClose={goBack}>
         <View style={styles.overlayContainer}>
           <OverlayContent />
         </View>
-      )}
+      </Modal>
       {!hasOverlay && (
         <View style={styles.tabBar}>
           {TABS.map(tab => {
@@ -138,9 +151,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkPanel,
     borderTopWidth: 1,
     borderTopColor: Colors.deepIceBlue,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 6,
-    paddingTop: 8,
-    height: Platform.OS === 'ios' ? 82 : 62,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 10,
+    paddingTop: 2,
+    height: Platform.OS === 'ios' ? 92 : 74,
   },
   tab: {
     flex: 1,

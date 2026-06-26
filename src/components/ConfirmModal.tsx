@@ -1,6 +1,13 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Colors } from '../theme/colors';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from 'react-native';
+import {Colors} from '../theme/colors';
 
 interface Props {
   visible: boolean;
@@ -14,22 +21,36 @@ interface Props {
 }
 
 export const ConfirmModal: React.FC<Props> = ({
-  visible, title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel',
-  onConfirm, onCancel, danger = false,
+  visible,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  onConfirm,
+  onCancel,
+  danger = false,
 }) => (
-  <Modal visible={visible} transparent animationType="fade">
+  <Modal
+    visible={visible}
+    transparent
+    animationType="fade"
+    statusBarTranslucent={Platform.OS === 'android'}>
     <View style={styles.ConfirmModalOverlay}>
       <View style={styles.ConfirmModalCard}>
         <Text style={styles.ConfirmModalTitle}>{title}</Text>
         <Text style={styles.ConfirmModalMessage}>{message}</Text>
         <View style={styles.ConfirmModalButtons}>
-          <TouchableOpacity style={styles.ConfirmModalCancelBtn} onPress={onCancel}>
+          <TouchableOpacity
+            style={styles.ConfirmModalCancelBtn}
+            onPress={onCancel}>
             <Text style={styles.ConfirmModalCancelText}>{cancelLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.ConfirmModalConfirmBtn, danger && styles.ConfirmModalDangerBtn]}
-            onPress={onConfirm}
-          >
+            style={[
+              styles.ConfirmModalConfirmBtn,
+              danger && styles.ConfirmModalDangerBtn,
+            ]}
+            onPress={onConfirm}>
             <Text style={styles.ConfirmModalConfirmText}>{confirmLabel}</Text>
           </TouchableOpacity>
         </View>
@@ -38,33 +59,39 @@ export const ConfirmModal: React.FC<Props> = ({
   </Modal>
 );
 
-const styles = StyleSheet.create({ ConfirmModalOverlay: {
+const styles = StyleSheet.create({
+  ConfirmModalOverlay: {
     flex: 1,
     backgroundColor: '#000000CC',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
-  }, ConfirmModalCard: {
+  },
+  ConfirmModalCard: {
     backgroundColor: Colors.solidCardNavy,
     borderRadius: 16,
     padding: 24,
     width: '100%',
     borderWidth: 1,
     borderColor: Colors.borderIce,
-  }, ConfirmModalTitle: {
+  },
+  ConfirmModalTitle: {
     color: Colors.textPrimary,
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 10,
-  }, ConfirmModalMessage: {
+  },
+  ConfirmModalMessage: {
     color: Colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 24,
-  }, ConfirmModalButtons: {
+  },
+  ConfirmModalButtons: {
     flexDirection: 'row',
     gap: 12,
-  }, ConfirmModalCancelBtn: {
+  },
+  ConfirmModalCancelBtn: {
     flex: 1,
     backgroundColor: Colors.darkPanel,
     borderRadius: 10,
@@ -72,19 +99,23 @@ const styles = StyleSheet.create({ ConfirmModalOverlay: {
     alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.borderIce,
-  }, ConfirmModalCancelText: {
+  },
+  ConfirmModalCancelText: {
     color: Colors.textSecondary,
     fontWeight: '600',
     fontSize: 15,
-  }, ConfirmModalConfirmBtn: {
+  },
+  ConfirmModalConfirmBtn: {
     flex: 1,
     backgroundColor: Colors.crystalCyan,
     borderRadius: 10,
     paddingVertical: 13,
     alignItems: 'center',
-  }, ConfirmModalDangerBtn: {
+  },
+  ConfirmModalDangerBtn: {
     backgroundColor: Colors.sculpturalRed,
-  }, ConfirmModalConfirmText: {
+  },
+  ConfirmModalConfirmText: {
     color: Colors.arcticNavy,
     fontWeight: '700',
     fontSize: 15,

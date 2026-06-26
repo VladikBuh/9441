@@ -16,6 +16,8 @@ import {DRAWING_TASKS} from '../../data/tasks';
 import {Storage} from '../../storage/storage';
 import {ConfirmModal} from '../../components/ConfirmModal';
 import {DrawingPath, SavedDrawing} from '../../types';
+import {useFocusEffect} from '@react-navigation/native';
+import Orientation from 'react-native-orientation-locker';
 
 const {width} = Dimensions.get('window');
 const CANVAS_W = width - 32;
@@ -66,6 +68,15 @@ export const StudioScreen: React.FC = () => {
       }
     });
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      Orientation.lockToPortrait();
+      return () => {
+        Orientation.unlockAllOrientations();
+      };
+    }, []),
+  );
 
   // Created once — never recreated on re-render
   const panResponder = useRef(

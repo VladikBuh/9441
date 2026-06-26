@@ -84,7 +84,9 @@ export const ExhibitionsScreen: React.FC = () => {
   const shareExhibition = (ex: Exhibition) => {
     Share.share({
       title: ex.title,
-      message: `${ex.title}\n${ex.location}\n${ex.coordinates.lat.toFixed(4)}°, ${ex.coordinates.lon.toFixed(4)}°`,
+      message: `${ex.title}\n${ex.location}\n${ex.coordinates.lat.toFixed(
+        4,
+      )}°, ${ex.coordinates.lon.toFixed(4)}°`,
     }).catch(() => {});
   };
 
@@ -183,26 +185,14 @@ export const ExhibitionsScreen: React.FC = () => {
                       latitude: ex.coordinates.lat,
                       longitude: ex.coordinates.lon,
                     }}
+                    pinColor={
+                      isSelected ? Colors.sculpturalRed : Colors.crystalCyan
+                    }
                     onPress={() => {
                       markerJustPressed.current = true;
                       setSelectedMarker(isSelected ? null : ex.id);
                     }}
-                    tracksViewChanges={false}>
-                    <View
-                      style={[
-                        styles.ExhibitionsScreenMarkerOuter,
-                        isSelected &&
-                          styles.ExhibitionsScreenMarkerOuterSelected,
-                      ]}>
-                      <View
-                        style={[
-                          styles.ExhibitionsScreenMarkerInner,
-                          isSelected &&
-                            styles.ExhibitionsScreenMarkerInnerSelected,
-                        ]}
-                      />
-                    </View>
-                  </Marker>
+                  />
                 );
               })}
             </MapView>
@@ -265,14 +255,19 @@ export const ExhibitionsScreen: React.FC = () => {
       )}
 
       {/* Tour modal */}
-      <Modal visible={routeModal.visible} transparent animationType="slide">
+      <Modal
+        visible={routeModal.visible}
+        transparent
+        animationType="slide"
+        statusBarTranslucent={Platform.OS === 'android'}>
         <View style={styles.ExhibitionsScreenRouteOverlay}>
           <View style={styles.ExhibitionsScreenRouteCard}>
-            <Text style={styles.ExhibitionsScreenRouteTitle}>
-              Tour Preview
-            </Text>
+            <Text style={styles.ExhibitionsScreenRouteTitle}>Tour Preview</Text>
             {routeModal.exhibition && (
-              <>
+              <ScrollView
+                bounces={false}
+                showsVerticalScrollIndicator={false}
+                style={styles.ExhibitionsScreenRouteScroll}>
                 <View style={styles.ExhibitionsScreenRouteRow}>
                   <Text style={styles.ExhibitionsScreenRouteLabel}>
                     Destination
@@ -322,7 +317,7 @@ export const ExhibitionsScreen: React.FC = () => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </>
+              </ScrollView>
             )}
           </View>
         </View>
@@ -390,36 +385,6 @@ const styles = StyleSheet.create({
   ExhibitionsScreenMapTabContainer: {flex: 1},
   ExhibitionsScreenMapWrapper: {flex: 1},
   ExhibitionsScreenMap: {flex: 1},
-
-  /* Markers */
-  ExhibitionsScreenMarkerOuter: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: Colors.crystalCyan,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.frostWhite,
-    shadowColor: Colors.crystalCyan,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-  ExhibitionsScreenMarkerOuterSelected: {
-    backgroundColor: Colors.sculpturalRed,
-    shadowColor: Colors.sculpturalRed,
-  },
-  ExhibitionsScreenMarkerInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.frostWhite,
-  },
-  ExhibitionsScreenMarkerInnerSelected: {
-    backgroundColor: Colors.frostWhite,
-  },
 
   /* Marker info card */
   ExhibitionsScreenMarkerCard: {
@@ -496,6 +461,10 @@ const styles = StyleSheet.create({
     padding: 24,
     borderTopWidth: 1,
     borderColor: Colors.borderIce,
+    maxHeight: '85%',
+  },
+  ExhibitionsScreenRouteScroll: {
+    flexGrow: 0,
   },
   ExhibitionsScreenRouteTitle: {
     color: Colors.textPrimary,
