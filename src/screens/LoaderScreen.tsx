@@ -76,7 +76,7 @@ export const LoaderScreen: React.FC<Props> = ({onFinish}) => {
   return (
     <View style={styles.LoaderScreenContainer}>
       <Image
-        source={require('../assets/images/sculpted-explorer-loader_bg.png')}
+        source={require('../assets/images/sculpted-explorer-onboarding2.png')}
         style={styles.LoaderScreenBg}
         resizeMode="cover"
       />

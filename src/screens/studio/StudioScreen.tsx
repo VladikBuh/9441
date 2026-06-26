@@ -161,7 +161,7 @@ export const StudioScreen: React.FC = () => {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `I created a custom ice figure in Sculpted Ice Explorer!\n\nTask: "${DRAWING_TASKS[taskIndex]}"\n\n— Sculpted Ice Explorer App`,
+        message: `I created a custom ice figure in Sculpted Ice Guide!\n\nTask: "${DRAWING_TASKS[taskIndex]}"`,
       });
     } catch {}
   };

@@ -1,4 +1,4 @@
-package com.sculptedexplorer
+package com.sculptedice.guide
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
