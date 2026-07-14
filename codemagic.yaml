@@ -1,6 +1,6 @@
 workflows:
-  ios-workflow:
-    name: 'Sculpted Ice Explorer'
+  react-native-ios:
+    name: Sculpted Ice Explorer
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
@@ -8,10 +8,10 @@ workflows:
     environment:
       xcode: '26.0'
       vars:
-        BUNDLE_ID: com.ksafdkmkskald.sculptedexplorer
-        XCODE_WORKSPACE: SculptedExplorer.xcworkspace
-        XCODE_SCHEME: SculptedExplorer
-        APP_STORE_APPLE_ID: 6783732353
+        XCODE_WORKSPACE: 'SculptedExplorer.xcworkspace'
+        XCODE_SCHEME: 'SculptedExplorer'
+        BUNDLE_ID: 'com.ksafdkmkskald.sculptedexplorer'
+        APP_STORE_APP_ID: 6783732353
     scripts:
       - name: Install npm dependencies
         script: npm install --force
@@ -32,7 +32,7 @@ workflows:
       - name: Increment build number
         script: |
           cd $CM_BUILD_DIR/ios
-          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+          agvtool new-version -all $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID") + 1))
       - name: Set Info.plist values
         script: |
           PLIST=$CM_BUILD_DIR/ios/SculptedExplorer/Info.plist
@@ -40,11 +40,7 @@ workflows:
           $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST || \
           $PLIST_BUDDY -c "Set :ITSAppUsesNonExemptEncryption false" $PLIST
       - name: Build IPA for distribution
-        script: |
-          xcode-project build-ipa \
-            --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-flags="-destination 'generic/platform=iOS'"
+        script: xcode-project build-ipa --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" --archive-flags="-destination 'generic/platform=iOS'"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
