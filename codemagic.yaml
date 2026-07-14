@@ -1,24 +1,33 @@
 workflows:
   react-native-ios:
-    name: Sculpted Ice Explorer
+    name: React Native iOS
     max_build_duration: 120
-    instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: sculped
+    instance_type: mac_mini_m1
     environment:
-      xcode: '26.0'
+      groups:
+        - app_store_credentials
       vars:
-        XCODE_WORKSPACE: 'SculptedExplorer.xcworkspace'
-        XCODE_SCHEME: 'SculptedExplorer'
-        BUNDLE_ID: 'com.ksafdkmkskald.sculptedexplorer'
+        XCODE_WORKSPACE: "SculptedExplorer.xcworkspace"
+        XCODE_SCHEME: "SculptedExplorer"
+        BUNDLE_ID: "com.ksafdkmkskald.sculptedexplorer"
         APP_STORE_APP_ID: 6783732353
+        APP_STORE_CONNECT_KEY_ID: "875999U44C" # <----
+        APP_STORE_CONNECT_ISSUER_ID: "8f41be6d-66d7-4df3-8505-a8bbc23556dc" # <----
+        node: latest
+        xcode: latest
+        cocoapods: default
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: develop
+          include: true
+          source: true
     scripts:
       - name: Install npm dependencies
         script: npm install --force
-      - name: Clean Pods
-        script: |
-          cd ios
-          rm -rf Pods Podfile.lock
       - name: Install CocoaPods dependencies
         script: cd ios && pod install
       - name: Set up keychain for code signing
@@ -27,18 +36,12 @@ workflows:
         script: app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
       - name: Use system default keychain
         script: keychain add-certificates
-      - name: Set up code signing settings in Xcode project
-        script: xcode-project use-profiles --warn-only
       - name: Increment build number
         script: |
           cd $CM_BUILD_DIR/ios
           agvtool new-version -all $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID") + 1))
-      - name: Set Info.plist values
-        script: |
-          PLIST=$CM_BUILD_DIR/ios/SculptedExplorer/Info.plist
-          PLIST_BUDDY=/usr/libexec/PlistBuddy
-          $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST || \
-          $PLIST_BUDDY -c "Set :ITSAppUsesNonExemptEncryption false" $PLIST
+      - name: Set up code signing settings in Xcode project
+        script: xcode-project use-profiles --warn-only
       - name: Build IPA for distribution
         script: xcode-project build-ipa --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" --archive-flags="-destination 'generic/platform=iOS'"
     artifacts:
@@ -47,7 +50,20 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
+      email:
+        recipients:
+          - vladdkolyadyuk@gmail.com        # <----
+        notify:
+          success: true
+          failure: false
+      slack:
+        channel: '#builds'
+        notify_on_build_start: true
+        notify:
+          success: true
+          failure: false
       app_store_connect:
-        auth: integration
-        submit_to_app_store: true
-        copyright: 'Ramon Gomes'
+        api_key: "$APP_STORE_CONNECT_PRIVATE_KEY"
+        key_id: "$APP_STORE_CONNECT_KEY_ID"
+        issuer_id: "$APP_STORE_CONNECT_ISSUER_ID"
+        submit_to_testflight: true
